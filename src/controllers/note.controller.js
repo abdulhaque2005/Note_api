@@ -1,8 +1,10 @@
+const mongoose = require("mongoose");
 const Note = require("../models/note.model");
 
+// 1. Create a note
 exports.createNote = async (req, res) => {
   try {
-    const { title, content, category, isPinned } = req.body;
+    const { title, content } = req.body;
 
     if (!title || !content) {
       return res.status(400).json({
@@ -12,12 +14,7 @@ exports.createNote = async (req, res) => {
       });
     }
 
-    const note = await Note.create({
-      title,
-      content,
-      category,
-      isPinned,
-    });
+    const note = await Note.create(req.body);
 
     res.status(201).json({
       success: true,
@@ -25,14 +22,11 @@ exports.createNote = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
 
+// 2. Create multiple notes
 exports.bulkCreateNotes = async (req, res) => {
   try {
     const { notes } = req.body;
@@ -53,14 +47,11 @@ exports.bulkCreateNotes = async (req, res) => {
       data: createdNotes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
 
+// 3. Get all notes
 exports.getAllNotes = async (req, res) => {
   try {
     const notes = await Note.find().sort("-createdAt");
@@ -71,19 +62,16 @@ exports.getAllNotes = async (req, res) => {
       data: notes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
 
+// 4. Get note by ID
 exports.getNoteById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid note ID",
@@ -107,20 +95,17 @@ exports.getNoteById = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
 
+// 5. Replace a note (PUT)
 exports.replaceNote = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, category, isPinned } = req.body;
+    const { title, content } = req.body;
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid note ID",
@@ -136,11 +121,11 @@ exports.replaceNote = async (req, res) => {
       });
     }
 
-    const note = await Note.findByIdAndUpdate(
-      id,
-      { title, content, category, isPinned },
-      { new: true, overwrite: true, runValidators: true }
-    );
+    const note = await Note.findByIdAndUpdate(id, req.body, {
+      new: true,
+      overwrite: true,
+      runValidators: true,
+    });
 
     if (!note) {
       return res.status(404).json({
@@ -156,19 +141,16 @@ exports.replaceNote = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
 
+// 6. Update specific fields (PATCH)
 exports.updateNote = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid note ID",
@@ -203,19 +185,16 @@ exports.updateNote = async (req, res) => {
       data: note,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
 
+// 7. Delete a single note
 exports.deleteNote = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid note ID",
@@ -239,14 +218,11 @@ exports.deleteNote = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
 
+// 8. Delete multiple notes
 exports.bulkDeleteNotes = async (req, res) => {
   try {
     const { ids } = req.body;
@@ -267,10 +243,6 @@ exports.bulkDeleteNotes = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      data: null,
-    });
+    res.status(500).json({ success: false, message: error.message, data: null });
   }
 };
