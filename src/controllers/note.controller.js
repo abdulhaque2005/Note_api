@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Note = require("../models/note.model");
 
-// 1. Create a note
 exports.createNote = async (req, res) => {
   try {
     const { title, content } = req.body;
@@ -26,7 +25,6 @@ exports.createNote = async (req, res) => {
   }
 };
 
-// 2. Create multiple notes
 exports.bulkCreateNotes = async (req, res) => {
   try {
     const { notes } = req.body;
@@ -51,7 +49,6 @@ exports.bulkCreateNotes = async (req, res) => {
   }
 };
 
-// 3. Get all notes
 exports.getAllNotes = async (req, res) => {
   try {
     const notes = await Note.find().sort("-createdAt");
@@ -66,7 +63,6 @@ exports.getAllNotes = async (req, res) => {
   }
 };
 
-// 4. Get note by ID
 exports.getNoteById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -99,7 +95,6 @@ exports.getNoteById = async (req, res) => {
   }
 };
 
-// 5. Replace a note (PUT)
 exports.replaceNote = async (req, res) => {
   try {
     const { id } = req.params;
@@ -145,7 +140,6 @@ exports.replaceNote = async (req, res) => {
   }
 };
 
-// 6. Update specific fields (PATCH)
 exports.updateNote = async (req, res) => {
   try {
     const { id } = req.params;
@@ -189,7 +183,6 @@ exports.updateNote = async (req, res) => {
   }
 };
 
-// 7. Delete a single note
 exports.deleteNote = async (req, res) => {
   try {
     const { id } = req.params;
@@ -222,7 +215,6 @@ exports.deleteNote = async (req, res) => {
   }
 };
 
-// 8. Delete multiple notes
 exports.bulkDeleteNotes = async (req, res) => {
   try {
     const { ids } = req.body;
